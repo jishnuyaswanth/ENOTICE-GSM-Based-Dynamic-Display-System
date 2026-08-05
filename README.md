@@ -21,9 +21,9 @@
 - [💻 Software Requirements](#-software-requirements)
 - [🔌 Hardware Connections](#-hardware-connections)
 - [📱 SMS Command Format](#-sms-command-format)
-- [🏗️ Block Diagram](#️-system-architecture)
+- [🏗️ Block Diagram](#️-block-diagram)
 - [📁 Project Structure](#-project-structure)
-- [⚙️ Flow Chart](#️-how-it-works)
+- [⚙️ Flow Chart](#️-flow-chart)
 - [🔐 Security Mechanism](#-security-mechanism)
 - [🚀 Getting Started](#-getting-started)
 - [📡 AT Commands Reference](#-at-commands-reference)
@@ -86,10 +86,10 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 
 | Shift Register | 📥 SIN (DSA) Pin | ⏱️ CP Pin | 🖥️ Drives |
 |----------------|-----------------|-----------|-----------|
-| 74HC164 **#1** | P0.16  | P0.17  | Display 1 columns |
-| 74HC164 **#2** | P0.18 | P0.19 | Display 2 columns |
-| 74HC164 **#3** | P0.20 | P0.21 | Display 3 columns |
-| 74HC164 **#4** | P0.22 | P0.23 | Display 4 columns |
+| 74HC164 **#1** | P0.8  | P0.9  | Display 1 columns |
+| 74HC164 **#2** | P0.10 | P0.11 | Display 2 columns |
+| 74HC164 **#3** | P0.12 | P0.13 | Display 3 columns |
+| 74HC164 **#4** | P0.14 | P0.15 | Display 4 columns |
 
 > 💡 Each 74HC164's Q0–Q7 outputs connect to COL1–COL8 of its respective dot-matrix panel. Column drive is **active-low**.
 
@@ -99,14 +99,14 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 
 | 74HC573 Pin | LPC2148 Pin | Dot Matrix Row |
 |-------------|-------------|----------------|
-| D0 | P0.8 | ROW 8 |
-| D1 | P0.9 | ROW 7 |
-| D2 | P0.10 | ROW 6 |
-| D3 | P0.11 | ROW 5 |
-| D4 | P0.12 | ROW 4 |
-| D5 | P0.13 | ROW 3 |
-| D6 | P0.14 | ROW 2 |
-| D7 | P0.15 | ROW 1 |
+| D0 | P0.16 | ROW 8 |
+| D1 | P0.17 | ROW 7 |
+| D2 | P0.18 | ROW 6 |
+| D3 | P0.19 | ROW 5 |
+| D4 | P0.20 | ROW 4 |
+| D5 | P0.21 | ROW 3 |
+| D6 | P0.22 | ROW 2 |
+| D7 | P0.23 | ROW 1 |
 
 ---
 
@@ -135,14 +135,14 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 ### 🖊️ Update Display Message
 
 ```
-5665DYour_Message@
+5665DYour_Message_Here@
 ```
 
 | Part | Meaning |
 |------|---------|
 | `5665` | 🔑 Security code |
 | `D` | 📺 **D**isplay update command |
-| `Your_Message_Here` | ✍️ Text to scroll on the board |
+| `Your_Message_` | ✍️ Text to scroll on the board |
 | `@` | 🔚 End-of-message terminator |
 
 **✅ Example:**
@@ -155,19 +155,19 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 ### 📞 Update Authorized Mobile Number
 
 ```
-5665M1234123456@
+5665M9898999923@
 ```
 
 | Part | Meaning |
 |------|---------|
 | `5665` | 🔑 Security code |
 | `M` | 📱 **M**obile number update command |
-| `1234123456` | ☎️ New 10-digit authorized number |
+| `9898999923` | ☎️ New 10-digit authorized number |
 | `@` | 🔚 Terminator |
 
 **✅ Example:**
 ```
-5665M1234123456@
+5665M9898999923@
 ```
 
 ---
@@ -178,16 +178,16 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 |----------|--------------------|
 | ✅ Valid `D` command, authorized sender | Display updated + EEPROM saved + SMS deleted |
 | ✅ Valid `M` command, authorized sender | Auth number updated + EEPROM saved + SMS deleted |
-| ⚠️ Authorized sender, wrong format/code | ❌ Reply SMS: *"Not a valid format. Correct format is 1212Dmsg#"* |
+| ⚠️ Authorized sender, wrong format/code | ❌ Reply SMS: *"Security Incorrect. Correct format is 5665Dmsg@"* |
 | ❌ Unauthorized sender number | 🚨 Alert SMS with sender's number sent to owner |
 
 ---
 
-## Block Diagram
+## 🏗️ Block Diagram
 
 ```
- <img width="1536" height="892" alt="ChatGPT Image Aug 5, 2026, 02_41_39 PM" src="https://github.com/user-attachments/assets/02d3e999-96a8-4381-91e7-ac467d29fb6b" />
-
+  <img width="1536" height="892" alt="ChatGPT Image Aug 5, 2026, 02_41_39 PM" src="https://github.com/user-attachments/assets/17ae8e06-8734-48cc-8b71-ae0d06c4c79f" />
+```
 
 ---
 
@@ -228,18 +228,16 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 | Address | Symbol | Content | Flag Value |
 |---------|--------|---------|------------|
 | `0x00` | `EE_MOBI` | Auth number presence flag | `'2'` = valid |
-| `0x01` | `EE_MOB` | Authorized mobile number (10 digits + `#`) | — |
+| `0x01` | `EE_MOB` | Authorized mobile number (10 digits + `@`) | — |
 | `0x14` | `EE_MSGI` | Message presence flag | `'1'` = valid |
-| `0x16` | `EE_MSG` | Display message string (variable + `#`) | — |
+| `0x16` | `EE_MSG` | Display message string (variable + `@`) | — |
 
 ---
 
 ## ⚙️ Flow Chart
 
 ```
-<img width="1254" height="440" alt="ChatGPT Image Aug 5, 2026, 02_41_28 PM" src="https://github.com/user-attachments/assets/26c11a1a-bc6c-4ad6-9aaf-33fa60e6b002" />
-
-
+  <img width="1254" height="440" alt="ChatGPT Image Aug 5, 2026, 02_41_28 PM" src="https://github.com/user-attachments/assets/183d3dbd-c586-4430-a39c-38bfc5f66e29" />
 ```
 
 ---
@@ -258,7 +256,7 @@ The system implements a **two-layer security model** to ensure only authorized u
 
 🔑 Layer 2 — Security Code + Command Validation
 ┌─────────────────────────────────────────────────────┐
-│  Message MUST contain "5665" + "D" or "M" + "@"     │
+│  Message MUST contain "1212" + "D" or "M" + "#"     │
 │  Wrong code or missing terminator →                  │
 │       ❌ Error reply SMS to authorized owner          │
 │       🗑️  SMS deleted immediately                    │
@@ -266,6 +264,7 @@ The system implements a **two-layer security model** to ensure only authorized u
 ```
 
 > 🛡️ **Zero tolerance:** No display update or EEPROM write ever occurs on a failed verification. Every unauthorized attempt triggers an immediate alert SMS to the registered owner.
+
 ---
 
 ## 🚀 Getting Started
