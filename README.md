@@ -235,9 +235,84 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 ---
 
 ## ⚙️ Flow Chart
-
-  <img width="1254" height="440" alt="ChatGPT Image Aug 5, 2026, 02_41_28 PM" src="https://github.com/user-attachments/assets/183d3dbd-c586-4430-a39c-38bfc5f66e29" />
-  
+```
+                    ┌─────────────┐
+                    │    START    │
+                    └──────┬──────┘
+                           │
+                           ▼
+              ┌─────────────────────────┐
+              │ Initialize LPC2148      │
+              │ • UART0                 │
+              │ • I²C                   │
+              │ • Dot Matrix            │
+              │ • GSM Module            │
+              └──────────┬──────────────┘
+                         │
+                         ▼
+            ┌──────────────────────────┐
+            │ Read Data from EEPROM    │
+            │ • Display Message        │
+            │ • Authorized Number      │
+            └──────────┬───────────────┘
+                       │
+                       ▼
+         ┌──────────────────────────────┐
+         │ Scroll Message on Dot Matrix │
+         └────────────┬─────────────────┘
+                      │
+                      ▼
+          ┌────────────────────────┐
+          │ New SMS Received ?     │
+          └───────┬────────┬───────┘
+                  │No      │Yes
+                  │        ▼
+                  │  ┌───────────────────┐
+                  │  │ Read SMS from GSM │
+                  │  └─────────┬─────────┘
+                  │            │
+                  │            ▼
+                  │  ┌──────────────────────┐
+                  │  │ Verify Sender Number │
+                  │  └─────────┬────────────┘
+                  │            │
+                  │     ┌──────┴───────┐
+                  │     │Authorized ?  │
+                  │     └───┬─────┬────┘
+                  │         │Yes  │No
+                  │         │     ▼
+                  │         │ Send Alert SMS
+                  │         │ Delete SMS
+                  │         │
+                  │         ▼
+                  │ ┌────────────────────┐
+                  │ │ Verify Command     │
+                  │ └─────────┬──────────┘
+                  │           │
+                  │           ▼
+                  │  ┌─────────────────────┐
+                  │  │ D / M / I Command ? │
+                  │  └──┬─────┬─────┬──────┘
+                  │     │     │     │
+                  │     │     │     │
+                  │     ▼     ▼     ▼
+                  │ Update  Update  Retrieve
+                  │ Message Number  Message
+                  │     │     │     │
+                  │     └──┬──┴──┬──┘
+                  │        ▼     ▼
+                  │  Store in EEPROM
+                  │        │
+                  │        ▼
+                  │   Delete SMS
+                  │        │
+                  └────────┴───────────────►
+                           │
+                           ▼
+                Scroll Updated Message
+                           │
+                           └──────────────► Repeat
+ ``` 
 ---
 
 ## 🔐 Security Mechanism
