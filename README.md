@@ -21,9 +21,9 @@
 - [💻 Software Requirements](#-software-requirements)
 - [🔌 Hardware Connections](#-hardware-connections)
 - [📱 SMS Command Format](#-sms-command-format)
-- [🏗️ System Architecture](#️-system-architecture)
+- [🏗️ Block Diagram](#️-system-architecture)
 - [📁 Project Structure](#-project-structure)
-- [⚙️ How It Works](#️-how-it-works)
+- [⚙️ Flow Chart](#️-how-it-works)
 - [🔐 Security Mechanism](#-security-mechanism)
 - [🚀 Getting Started](#-getting-started)
 - [📡 AT Commands Reference](#-at-commands-reference)
@@ -86,10 +86,10 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 
 | Shift Register | 📥 SIN (DSA) Pin | ⏱️ CP Pin | 🖥️ Drives |
 |----------------|-----------------|-----------|-----------|
-| 74HC164 **#1** | P0.8  | P0.9  | Display 1 columns |
-| 74HC164 **#2** | P0.10 | P0.11 | Display 2 columns |
-| 74HC164 **#3** | P0.12 | P0.13 | Display 3 columns |
-| 74HC164 **#4** | P0.14 | P0.15 | Display 4 columns |
+| 74HC164 **#1** | P0.16  | P0.17  | Display 1 columns |
+| 74HC164 **#2** | P0.18 | P0.19 | Display 2 columns |
+| 74HC164 **#3** | P0.20 | P0.21 | Display 3 columns |
+| 74HC164 **#4** | P0.22 | P0.23 | Display 4 columns |
 
 > 💡 Each 74HC164's Q0–Q7 outputs connect to COL1–COL8 of its respective dot-matrix panel. Column drive is **active-low**.
 
@@ -99,14 +99,14 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 
 | 74HC573 Pin | LPC2148 Pin | Dot Matrix Row |
 |-------------|-------------|----------------|
-| D0 | P0.16 | ROW 8 |
-| D1 | P0.17 | ROW 7 |
-| D2 | P0.18 | ROW 6 |
-| D3 | P0.19 | ROW 5 |
-| D4 | P0.20 | ROW 4 |
-| D5 | P0.21 | ROW 3 |
-| D6 | P0.22 | ROW 2 |
-| D7 | P0.23 | ROW 1 |
+| D0 | P0.8 | ROW 8 |
+| D1 | P0.9 | ROW 7 |
+| D2 | P0.10 | ROW 6 |
+| D3 | P0.11 | ROW 5 |
+| D4 | P0.12 | ROW 4 |
+| D5 | P0.13 | ROW 3 |
+| D6 | P0.14 | ROW 2 |
+| D7 | P0.15 | ROW 1 |
 
 ---
 
@@ -135,19 +135,19 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 ### 🖊️ Update Display Message
 
 ```
-1212DYour_Message_Here#
+5665DYour_Message@
 ```
 
 | Part | Meaning |
 |------|---------|
-| `1212` | 🔑 Security code |
+| `5665` | 🔑 Security code |
 | `D` | 📺 **D**isplay update command |
 | `Your_Message_Here` | ✍️ Text to scroll on the board |
-| `#` | 🔚 End-of-message terminator |
+| `@` | 🔚 End-of-message terminator |
 
 **✅ Example:**
 ```
-1212DWELCOME TO OUR COLLEGE#
+5665DWELCOME TO MY PROFILE@
 ```
 
 ---
@@ -155,19 +155,19 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 ### 📞 Update Authorized Mobile Number
 
 ```
-1212M9866666699#
+5665M1234123456@
 ```
 
 | Part | Meaning |
 |------|---------|
-| `1212` | 🔑 Security code |
+| `5665` | 🔑 Security code |
 | `M` | 📱 **M**obile number update command |
-| `9866666699` | ☎️ New 10-digit authorized number |
-| `#` | 🔚 Terminator |
+| `1234123456` | ☎️ New 10-digit authorized number |
+| `@` | 🔚 Terminator |
 
 **✅ Example:**
 ```
-1212M9876543210#
+5665M1234123456@
 ```
 
 ---
@@ -183,42 +183,11 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 
 ---
 
-## 🏗️ System Architecture
+## Block Diagram
 
 ```
-  ┌──────────────────────────────────────────────┐
-  │           📱 Authorized Mobile Phone          │
-  │                     │ SMS                     │
-  └─────────────────────┼───────────────────────--┘
-                        ▼
-           ┌────────────────────────┐
-           │   📶 GSM Module M660A  │
-           │    UART @ 9600 baud    │
-           └───────────┬────────────┘
-                       │ UART0 (P0.0 / P0.1)
-                       ▼
-     ┌─────────────────────────────────────────┐
-     │         🧠 LPC2148 ARM7TDMI-S           │
-     │                                         │
-     │  ⚡ UART0 ISR ──► sms_flag = 1          │
-     │                                         │
-     │  🔐 verify_format()                     │
-     │      ├─ Case 1: extract_content()       │
-     │      ├─ Case 2: extract_num()           │
-     │      ├─ Case 3: send error SMS          │
-     │      └─ Case 4: send alert SMS          │
-     │                                         │
-     │  [I²C Bus]           [GPIO Port 0]      │
-     │      │                    │             │
-     │      ▼                    ▼             │
-     │ 💾 AT24C256         🔀 74HC164 ×4       │
-     │  EEPROM              Shift Registers    │
-     │ (msg + auth num)     (Column Drivers)   │
-     │                           │             │
-     │                    🟥 4× 8×8 Dot Matrix │
-     │                       LED Panels        │
-     └─────────────────────────────────────────┘
-```
+ <img width="1536" height="892" alt="ChatGPT Image Aug 5, 2026, 02_41_39 PM" src="https://github.com/user-attachments/assets/02d3e999-96a8-4381-91e7-ac467d29fb6b" />
+
 
 ---
 
@@ -265,46 +234,12 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 
 ---
 
-## ⚙️ How It Works
+## ⚙️ Flow Chart
 
 ```
-🔌 Power ON
-      │
-      ▼
-🔧 Init: UART0 → I²C → Dot Matrix → GSM Module
-      │
-      ▼
-💾 Restore from EEPROM:
-   ├─ If EE_MSGI == '1' → load stored message
-   └─ If EE_MOBI == '2' → load stored auth number
-      │
-      ▼
-🔁 MAIN LOOP ──────────────────────────────────────────┐
-      │                                                 │
-      ▼                                                 │
-📜 Scroll stored_msg on dot-matrix display              │
-      │                                                 │
-      │ (UART ISR detects +CMTI → sets sms_flag = 1)   │
-      │                                                 │
-      ▼ sms_flag == 1                                   │
-📥 Read SMS via AT+CMGR=1                               │
-      │                                                 │
-      ▼                                                 │
-🔐 verify_format(sms, auth_number)                      │
-      │                                                 │
-   ┌──┴───────────────────────────────────┐             │
-   │  Case 1 (D cmd)  │  Case 2 (M cmd)  │             │
-   │  ↓ extract_msg   │  ↓ extract_num   │             │
-   │  ↓ EEPROM write  │  ↓ EEPROM write  │             │
-   │                                     │             │
-   │  Case 3 (bad fmt)│  Case 4 (unauth) │             │
-   │  ↓ send err SMS  │  ↓ send alert SMS│             │
-   └──────────────────┴──────────────────┘             │
-      │                                                 │
-      ▼                                                 │
-🗑️ delete_sms()                                         │
-      │                                                 │
-      └─────────────────────────────────────────────────┘
+<img width="1254" height="440" alt="ChatGPT Image Aug 5, 2026, 02_41_28 PM" src="https://github.com/user-attachments/assets/26c11a1a-bc6c-4ad6-9aaf-33fa60e6b002" />
+
+
 ```
 
 ---
@@ -323,7 +258,7 @@ The system implements a **two-layer security model** to ensure only authorized u
 
 🔑 Layer 2 — Security Code + Command Validation
 ┌─────────────────────────────────────────────────────┐
-│  Message MUST contain "1212" + "D" or "M" + "#"     │
+│  Message MUST contain "5665" + "D" or "M" + "@"     │
 │  Wrong code or missing terminator →                  │
 │       ❌ Error reply SMS to authorized owner          │
 │       🗑️  SMS deleted immediately                    │
@@ -331,7 +266,6 @@ The system implements a **two-layer security model** to ensure only authorized u
 ```
 
 > 🛡️ **Zero tolerance:** No display update or EEPROM write ever occurs on a failed verification. Every unauthorized attempt triggers an immediate alert SMS to the registered owner.
-
 ---
 
 ## 🚀 Getting Started
