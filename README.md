@@ -254,7 +254,7 @@ The system implements a **two-layer security model** to ensure only authorized u
 
 🔑 Layer 2 — Security Code + Command Validation
 ┌─────────────────────────────────────────────────────┐
-│  Message MUST contain "5665" + "D" or "M" + "#"     │
+│  Message MUST contain "5665" + "D" or "M" + "@"     │
 │  Wrong code or missing terminator →                  │
 │       ❌ Error reply SMS to authorized owner          │
 │       🗑️  SMS deleted immediately                    │
