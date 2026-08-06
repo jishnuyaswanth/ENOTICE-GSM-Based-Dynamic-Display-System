@@ -214,20 +214,31 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 The system implements a **two-layer security model** to ensure only authorized users can control the display:
 
 ```
-🔒 Layer 1 — Sender Number Authentication
-┌─────────────────────────────────────────────────────┐
-│  Only the number stored in EEPROM can issue commands│
-│  Any other number → 🚨 Alert SMS sent to owner      │
-│                   → 🗑️  SMS deleted                 │
-└─────────────────────────────────────────────────────┘
-
-🔑 Layer 2 — Security Code + Command Validation
-┌─────────────────────────────────────────────────────┐
-│  Message MUST contain "5665" + "D" or "M" + "@"     │
-│  Wrong code or missing terminator →                 │
-│       ❌ Error reply SMS to authorized owner        │
-│       🗑️  SMS deleted immediately                   │
-└─────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────┐
+│                  🔐 Two-Layer Security Mechanism                           │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│ 🔒 Layer 1 : Sender Number Authentication                                 │
+│                                                                            │
+│ • Only the mobile number stored in EEPROM is authorized.                  │
+│ • Unauthorized sender:                                                    │
+│   - Alert SMS is sent to the authorized user.                             │
+│   - Received SMS is deleted from the GSM module.                           │
+│                                                                            │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│ 🔑 Layer 2 : Security Code & Command Validation                           │
+│                                                                            │
+│ Valid Commands:                                                           │
+│   • 5665D<Message>@  → Update Display Message                             │
+│   • 5665M<Number>@   → Update Authorized Mobile Number                    │
+│   • 5665I@           → Retrieve Current Display Message                   │
+│                                                                            │
+│ Invalid security code or incorrect format:                                │
+│   - Error SMS is sent to the authorized user.                             │
+│   - Received SMS is deleted from the GSM module.                           │
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
 ```
 
 > 🛡️ **Zero tolerance:** No display update or EEPROM write ever occurs on a failed verification. Every unauthorized attempt triggers an immediate alert SMS to the registered owner.
