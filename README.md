@@ -191,39 +191,14 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 
 ---
 
-## 📁 Project Structure
 
-```
-📦 NextGen-ENotice/
-│
-├── 📄 main.c                  ← 🎯 Entry point & main SMS dispatch loop
-├── 📄 gsm.c / gsm.h           ← 📶 GSM module: AT commands, SMS ops
-├── 📄 uart.c / uart.h         ← ⚡ UART0: ISR-driven receive, TX functions
-├── 📄 uart_def.h              ← ⚙️  UART baud rate & bit definitions
-├── 📄 uart0.h                 ← 📋 Alternate minimal UART0 prototypes
-│
-├── 📄 dot_matrix.c            ← 🖥️  Display: row scan, font lookup, scroll
-├── 📄 dotmatrix.h             ← 📋 Dot matrix public API
-├── 📄 dot_mat_def.h           ← 🔤 8×8 font bitmap table (96 ASCII chars)
-│
-├── 📄 sipo.c                  ← 🔀 74HC164 bit-bang shift register driver
-├── 📄 sipo_74hc164.h          ← 📋 SIPO driver prototypes
-│
-├── 📄 i2c.c / i2c.h           ← 🔗 I²C bus: start/stop/write/read
-├── 📄 i2c_defines.h           ← ⚙️  I²C speed, pin & register definitions
-├── 📄 i2c_eprom.c             ← 💾 AT24C256 byte-write, string read/write
-├── 📄 i2c_eeprom.h            ← 📋 EEPROM public API
-├── 📄 i2c_eeprom_defines.h    ← 🗺️  EEPROM addresses & memory map
-│
-├── 📄 security.c              ← 🔐 SMS verification & content extraction
-├── 📄 security.h              ← 🔐 Security function prototypes
-│
-├── 📄 delay.c / delay.h       ← ⏱️  Busy-wait delays (µs / ms / s)
-├── 📄 defines.h               ← 🔧 Bit manipulation macros
-└── 📄 types.h                 ← 📐 Type aliases (u8, u16, u32, s8, s32…)
-```
+## ⚙️ Flow Chart
 
-### 🗺️ EEPROM Memory Map
+<img width="973" height="1306" alt="ChatGPT Image Aug 5, 2026, 03_49_17 PM" src="https://github.com/user-attachments/assets/9c34fcd1-5db4-4534-a534-b629759cf731" />
+
+---
+
+## 🗺️ EEPROM Memory Map
 
 | Address | Symbol | Content | Flag Value |
 |---------|--------|---------|------------|
@@ -231,12 +206,6 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 | `0x01` | `EE_MOB` | Authorized mobile number (10 digits + `@`) | — |
 | `0x14` | `EE_MSGI` | Message presence flag | `'1'` = valid |
 | `0x16` | `EE_MSG` | Display message string (variable + `@`) | — |
-
----
-
-## ⚙️ Flow Chart
-
-<img width="973" height="1306" alt="ChatGPT Image Aug 5, 2026, 03_49_17 PM" src="https://github.com/user-attachments/assets/9c34fcd1-5db4-4534-a534-b629759cf731" />
 
 ---
 
