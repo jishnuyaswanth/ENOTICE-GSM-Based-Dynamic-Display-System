@@ -215,7 +215,7 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 ├── 📄 i2c_eeprom.h            ← 📋 EEPROM public API
 ├── 📄 i2c_eeprom_defines.h    ← 🗺️  EEPROM addresses & memory map
 │
-├── 📄 fun.c / fun.h           ← 🔐 SMS verification & content extraction
+├── 📄 security.c              ← 🔐 SMS verification & content extraction
 ├── 📄 security.h              ← 🔐 Security function prototypes
 │
 ├── 📄 delay.c / delay.h       ← ⏱️  Busy-wait delays (µs / ms / s)
@@ -254,7 +254,7 @@ The system implements a **two-layer security model** to ensure only authorized u
 
 🔑 Layer 2 — Security Code + Command Validation
 ┌─────────────────────────────────────────────────────┐
-│  Message MUST contain "1212" + "D" or "M" + "#"     │
+│  Message MUST contain "5665" + "D" or "M" + "#"     │
 │  Wrong code or missing terminator →                  │
 │       ❌ Error reply SMS to authorized owner          │
 │       🗑️  SMS deleted immediately                    │
@@ -308,7 +308,7 @@ Use **Flash Magic** to program the `.hex` file to LPC2148 via UART0:
 Power on the board and send an SMS from the registered number:
 
 ```
-1212DHELLO WORLD#
+5665DHELLO WORLD@
 ```
 
 🎉 **`HELLO WORLD` should begin scrolling on the display!**
