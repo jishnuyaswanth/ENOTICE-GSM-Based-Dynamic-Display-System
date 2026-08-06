@@ -214,14 +214,13 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 The system implements a **two-layer security model** to ensure only authorized users can control the display:
 
 ```
-| **Security Layer**                  | **Condition**                                         | **System Response**                                                   |
-| :---------------------------------- | :---------------------------------------------------- | :-------------------------------------------------------------------- |
-| **Layer 1 – Sender Authentication** | Sender number matches the EEPROM-stored mobile number | Continue with command validation.                                     |
-|                                     | Sender number does not match                          | Send an alert SMS to the authorized user and delete the received SMS. |
-| **Layer 2 – Command Validation**    | `5665D<Message>@`                                     | Update the scrolling display message and store it in EEPROM.          |
-|                                     | `5665M<Number>@`                                      | Update the authorized mobile number and store it in EEPROM.           |
-|                                     | `5665I@`                                              | Retrieve and send the currently displayed message via SMS.            |
-|                                     | Invalid security code or incorrect command format     | Send an error SMS to the authorized user and delete the received SMS. |
+| **Sender**   | **Command**       | **Validation** | **Action**                                                   |
+| :----------- | :---------------- | :------------- | :----------------------------------------------------------- |
+| Authorized   | `5665D<Message>@` | ✅ Valid        | Update display message and EEPROM.                           |
+| Authorized   | `5665M<Number>@`  | ✅ Valid        | Update authorized mobile number and EEPROM.                  |
+| Authorized   | `5665I@`          | ✅ Valid        | Send the current display message via SMS.                    |
+| Authorized   | Invalid command   | ❌ Invalid      | Send an error SMS and delete the SMS.                        |
+| Unauthorized | Any command       | ❌ Invalid      | Send an alert SMS to the authorized user and delete the SMS. |
 
 ```
 
@@ -247,13 +246,13 @@ Wire all components per the connection tables above.
 
 Test each subsystem individually before full integration:
 
-- [ ] ✅ Single character on one dot-matrix panel
-- [ ] ✅ 4-panel word display (`HELP`)
-- [ ] ✅ Full string scrolling (`PROJECT SUCCESSFULLY STARTED`)
-- [ ] ✅ EEPROM write → power cycle → read → display
-- [ ] ✅ UART0 loopback with interrupt
-- [ ] ✅ GSM AT command test via HyperTerminal at 9600 baud
-- [ ] ✅ Full SMS send/receive/display loop
+-  ✅ Single character on one dot-matrix panel
+-  ✅ 4-panel word display (`HELP`)
+-  ✅ Full string scrolling (`PROJECT SUCCESSFULLY STARTED`)
+-  ✅ EEPROM write → power cycle → read → display
+-  ✅ UART0 loopback with interrupt
+-  ✅ GSM AT command test via HyperTerminal at 9600 baud
+-  ✅ Full SMS send/receive/display loop
 
 ### 🔨 Step 4 — Build
 
