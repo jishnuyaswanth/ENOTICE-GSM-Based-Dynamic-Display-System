@@ -216,17 +216,17 @@ The system implements a **two-layer security model** to ensure only authorized u
 ```
 🔒 Layer 1 — Sender Number Authentication
 ┌─────────────────────────────────────────────────────┐
-│  Only the number stored in EEPROM can issue commands │
-│  Any other number → 🚨 Alert SMS sent to owner       │
-│                   → 🗑️  SMS deleted                  │
+│  Only the number stored in EEPROM can issue commands│
+│  Any other number → 🚨 Alert SMS sent to owner      │
+│                   → 🗑️  SMS deleted                 │
 └─────────────────────────────────────────────────────┘
 
 🔑 Layer 2 — Security Code + Command Validation
 ┌─────────────────────────────────────────────────────┐
 │  Message MUST contain "5665" + "D" or "M" + "@"     │
-│  Wrong code or missing terminator →                  │
-│       ❌ Error reply SMS to authorized owner          │
-│       🗑️  SMS deleted immediately                    │
+│  Wrong code or missing terminator →                 │
+│       ❌ Error reply SMS to authorized owner        │
+│       🗑️  SMS deleted immediately                   │
 └─────────────────────────────────────────────────────┘
 ```
 
