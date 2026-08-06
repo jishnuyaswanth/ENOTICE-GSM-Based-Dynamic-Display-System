@@ -214,14 +214,15 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 The system implements a **two-layer security model** to ensure only authorized users can control the display:
 
 ```
+------------------------------------------------------------------------------------------------------------------
 |   Sender     |   Command         |   Validation |   Action                                                     |
-| :----------- | :---------------- | :----------- | :----------------------------------------------------------- |
-| Authorized   | `5665D<Message>@` |  Valid       | Update display message and EEPROM.                           |
-| Authorized   | `5665M<Number>@`  |  Valid       | Update authorized mobile number and EEPROM.                  |
+| ------------ | ----------------- | ------------ | ------------------------------------------------------------ |
+| Authorized   | `5665DMessage@`   |  Valid       | Update display message and EEPROM.                           |
+| Authorized   | `5665MNumber@`    |  Valid       | Update authorized mobile number and EEPROM.                  |
 | Authorized   | `5665I@`          |  Valid       | Send the current display message via SMS.                    |
 | Authorized   | Invalid command   |  Invalid     | Send an error SMS and delete the SMS.                        |
 | Unauthorized | Any command       |  Invalid     | Send an alert SMS to the authorized user and delete the SMS. |
-
+------------------------------------------------------------------------------------------------------------------
 ```
 
 > 🛡️ **Zero tolerance:** No display update or EEPROM write ever occurs on a failed verification. Every unauthorized attempt triggers an immediate alert SMS to the registered owner.
