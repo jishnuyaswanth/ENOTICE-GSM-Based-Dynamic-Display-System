@@ -214,24 +214,15 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 The system implements a **two-layer security model** to ensure only authorized users can control the display:
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ Layer 1 : Sender Number Authentication                                      │
-├──────────────────────────────────────────────────────────────────────────────┤
-│ • Only the mobile number stored in EEPROM is authorized.                    │
-│ • Unauthorized sender:                                                      │
-│   - Alert SMS is sent to the authorized user.                               │
-│   - Received SMS is deleted from the GSM module.                             │
-├──────────────────────────────────────────────────────────────────────────────┤
-│ Layer 2 : Security Code & Command Validation                                │
-├──────────────────────────────────────────────────────────────────────────────┤
-│ • 5665D<Message>@  -> Update Display Message                                │
-│ • 5665M<Number>@   -> Update Authorized Mobile Number                       │
-│ • 5665I@           -> Retrieve Current Display Message                      │
-│                                                                              │
-│ Invalid Command:                                                            │
-│ • Error SMS is sent to the authorized user.                                 │
-│ • Received SMS is deleted from the GSM module.                               │
-└──────────────────────────────────────────────────────────────────────────────┘
+| **Security Layer**                  | **Condition**                                         | **System Response**                                                   |
+| :---------------------------------- | :---------------------------------------------------- | :-------------------------------------------------------------------- |
+| **Layer 1 – Sender Authentication** | Sender number matches the EEPROM-stored mobile number | Continue with command validation.                                     |
+|                                     | Sender number does not match                          | Send an alert SMS to the authorized user and delete the received SMS. |
+| **Layer 2 – Command Validation**    | `5665D<Message>@`                                     | Update the scrolling display message and store it in EEPROM.          |
+|                                     | `5665M<Number>@`                                      | Update the authorized mobile number and store it in EEPROM.           |
+|                                     | `5665I@`                                              | Retrieve and send the currently displayed message via SMS.            |
+|                                     | Invalid security code or incorrect command format     | Send an error SMS to the authorized user and delete the received SMS. |
+
 ```
 
 > 🛡️ **Zero tolerance:** No display update or EEPROM write ever occurs on a failed verification. Every unauthorized attempt triggers an immediate alert SMS to the registered owner.
