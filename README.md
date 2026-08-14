@@ -182,6 +182,10 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 | ❌ Unauthorized sender number | 🚨 Alert SMS with sender's number sent to owner |
 
 ---
+## Hardware Kit
+<img width="1280" height="1164" alt="Hardware Kit" src="https://github.com/user-attachments/assets/bcbc8621-464b-4dea-87d6-0a7ad9d10c7f" />
+
+---
 
 ## 🏗️ Block Diagram
 
