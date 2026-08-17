@@ -188,8 +188,8 @@ Built on the **LPC2148 ARM7TDMI-S microcontroller**, the system uses a **GSM mod
 ---
 
 ## 🏗️ Block Diagram
+<img width="1536" height="1024" alt="ChatGPT Image Aug 17, 2026, 03_18_03 PM" src="https://github.com/user-attachments/assets/03a4b325-5582-43bd-b267-8ee8a14ef67a" />
 
- <img width="1254" height="934" alt="ChatGPT Image Aug 5, 2026, 03_20_16 PM" src="https://github.com/user-attachments/assets/403d8b91-e53b-48a6-8091-4b0eddab67c9" />
 
 
 
